@@ -34,6 +34,7 @@ public class GameplayManager : MonoBehaviour
     private int countryReferenceCount = 0;
     private int initialArmyCount;
     private int roundType = 2; // 0: deploy, 1: attack, 2: redeploy, 3: waiting/initial state
+    private List<Country> countryList = new List<Country>();
 
     // variables eventually to be put in a static script
     // TODO: player references
@@ -85,22 +86,14 @@ public class GameplayManager : MonoBehaviour
     {
         foreach (Region region in regions)
         {
-            int playerIndex = 0;
             region.Initialize();
             foreach (Country country in region.countries)
             {
-                //TODO: randomize or let people pick which country is theirs also only allow a default of 1 battalion instead of 10
-                country.SetOwner(GameData.players[playerIndex]);
-                country.SetNumberOfBattalionsOccupying(10);
-                GameData.players[playerIndex].AddCountry(country);
-
-                // TODO: countries assigned to either player evenly  but make it more random than every other
-                if (regions[0] != region)
-                {
-                    playerIndex = (playerIndex + 1) % GameData.players.Count;
-                }
+                countryList.Add(country);
+                country.SetNumberOfBattalionsOccupying(1);
             }
         }
+        InitializeCountryOwnerShip();
         foreach (Player player in GameData.players)
         {
             setRegionOwnership(player);
@@ -115,6 +108,25 @@ public class GameplayManager : MonoBehaviour
         isInitial = true;
         curPlayer.numberOfBattalionsToDeploy = AmountOfDeployments();
         startDeploy = true;
+    }
+
+    private void InitializeCountryOwnerShip()
+    {
+        Random rnd = new Random();
+
+        int index = countryList.Count - 1;
+        int playerIndex = 0;
+        for (int i = index; i > -1; i--)
+        {
+            int countryIndex = Random.Range(0, i);
+            Country country = countryList[countryIndex];
+            //TODO: option in main menu to randomize or let people pick which country is theirs
+            country.SetOwner(GameData.players[playerIndex]);
+            GameData.players[playerIndex].AddCountry(country);
+            countryList.Remove(country);
+
+            playerIndex = (playerIndex + 1) % GameData.players.Count;
+        }
     }
 
     public void InitializeGameCallback()
