@@ -70,6 +70,8 @@ public class Country
 
     public void SetOwner(Player owner)
     {
+        gameObjectRef.GetComponent<SpriteRenderer>().color = owner.GetColor();
+        nextStateRef.GetComponent<SpriteRenderer>().color = owner.GetColor();
         this.owner = owner;
     }
 

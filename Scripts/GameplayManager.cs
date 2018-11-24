@@ -97,7 +97,7 @@ public class GameplayManager : MonoBehaviour
                 // TODO: countries assigned to either player evenly  but make it more random than every other
                 if (regions[0] != region)
                 {
-                    playerIndex = (playerIndex + 1) % 2;
+                    playerIndex = (playerIndex + 1) % GameData.players.Count;
                 }
             }
         }
@@ -111,6 +111,7 @@ public class GameplayManager : MonoBehaviour
         //TODO: choose player by choice i.e. random
         curPlayer = GameData.players[0];
         playerField.text = PLAYER + 0;
+        playerField.color = curPlayer.GetColor();
         isInitial = true;
         curPlayer.numberOfBattalionsToDeploy = AmountOfDeployments();
         startDeploy = true;
@@ -121,6 +122,7 @@ public class GameplayManager : MonoBehaviour
         int index = GameData.players.IndexOf(curPlayer);
         curPlayer = GameData.players[(GameData.players.IndexOf(curPlayer) + 1) % GameData.players.Count];
         playerField.text = PLAYER + GameData.players.IndexOf(curPlayer);
+        playerField.color = curPlayer.GetColor();
         curPlayer.numberOfBattalionsToDeploy = AmountOfDeployments();
         Debug.Log("player " + index + " added deployment to " + countryReference.gameObjectRef.name);
         if (index == GameData.players.Count - 1)
@@ -307,6 +309,7 @@ public class GameplayManager : MonoBehaviour
             case 2:
                 curPlayer = GameData.players[(GameData.players.IndexOf(curPlayer) + 1) % GameData.players.Count];
                 playerField.text = PLAYER + GameData.players.IndexOf(curPlayer).ToString();
+                playerField.color = curPlayer.GetColor();
                 roundType = 3;
                 disableTransitionDialog = false;
                 break;

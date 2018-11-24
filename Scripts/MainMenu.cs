@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour {
 
     private List<Player> players = new List<Player>();
     private string levelName;
+    private Color[] colors = new Color[4];
 
     // Use this for initialization
     void Start () {
@@ -45,16 +46,25 @@ public class MainMenu : MonoBehaviour {
 
     private void InitializeGameOptions()
     {
+        colors[0] = Color.cyan;
+        colors[1] = Color.red;
+        colors[2] = Color.green;
+        colors[3] = Color.magenta;
         LoadInData();
-        Player newLocalPlayer = new Player();
-        newLocalPlayer.numberOfBattleBattalions = 0;
-        newLocalPlayer.numberOfBattalionsToDeploy = 3;
-        players.Add(newLocalPlayer);
+
+        players.Add(createPlayer(0));
         // add the second player on default
+        players.Add(createPlayer(1));
+    }
+
+    private Player createPlayer(int index)
+    {
         Player newPlayer = new Player();
         newPlayer.numberOfBattleBattalions = 0;
         newPlayer.numberOfBattalionsToDeploy = 3;
-        players.Add(newPlayer);
+        newPlayer.SetColor(colors[index]);
+
+        return newPlayer;
     }
 
     private void LoadInMapData()
@@ -84,10 +94,7 @@ public class MainMenu : MonoBehaviour {
         {
             for (int i = players.Count; i < value; i++)
             {
-                Player newPlayer = new Player();
-                newPlayer.numberOfBattleBattalions = 0;
-                newPlayer.numberOfBattalionsToDeploy = 3;
-                players.Add(newPlayer);
+                players.Add(createPlayer(i));
 
             }
         }

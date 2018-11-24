@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player
 {
     private string ID;
+    private Color color;
     public int numberOfBattleBattalions { get; set; }
     public int numberOfBattalionsToDeploy { get; set; }
     private List<Country> countriesOwned { get; set; }
@@ -26,6 +27,16 @@ public class Player
     public string GetID()
     {
         return ID;
+    }
+
+    public Color GetColor()
+    {
+        return color;
+    }
+
+    public void SetColor(Color color)
+    {
+        this.color = color;
     }
 
     public void AddCountry(Country country)
