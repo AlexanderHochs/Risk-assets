@@ -82,7 +82,7 @@ public class ReinforcementManager : MonoBehaviour {
     public void OnRedeploymentDialogSubmit()
     {
         BattalionDeployment(true);
-        gameObject.GetComponent<GameplayManager>().StartTransitionDialog();
+        gameObject.GetComponent<GameplayManager>().RunTransitionDialog();
     }
 
     // end redeployment dialog
@@ -137,7 +137,7 @@ public class ReinforcementManager : MonoBehaviour {
         }
         else
         {
-            gameObject.GetComponent<GameplayManager>().StartTransitionDialog();
+            gameObject.GetComponent<GameplayManager>().RunTransitionDialog();
         }
     }
     //end deployment

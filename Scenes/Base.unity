@@ -1472,40 +1472,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
---- !u!1 &145502267
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 145502268}
-  m_Layer: 5
-  m_Name: InvasionDialog
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &145502268
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 145502267}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 388892939}
-  m_Father: {fileID: 335580142}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &147291095
 GameObject:
   m_ObjectHideFlags: 0
@@ -2971,7 +2937,7 @@ RectTransform:
   - {fileID: 1567563651}
   - {fileID: 484573196}
   - {fileID: 986349593}
-  - {fileID: 145502268}
+  - {fileID: 388892939}
   - {fileID: 1078851583}
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -3363,7 +3329,7 @@ GameObject:
   - component: {fileID: 388892941}
   - component: {fileID: 388892940}
   m_Layer: 5
-  m_Name: End Attack
+  m_Name: Transition Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3375,17 +3341,17 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 388892938}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1946771355}
-  m_Father: {fileID: 145502268}
-  m_RootOrder: 0
+  m_Father: {fileID: 335580142}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 245, y: -159}
+  m_AnchoredPosition: {x: -133.5, y: 26.5}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &388892940
@@ -3427,8 +3393,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1967363819}
-        m_MethodName: LoadTransitionDialog
+      - m_Target: {fileID: 1967363820}
+        m_MethodName: RunTransitionDialog
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7313,7 +7279,7 @@ GameObject:
   - component: {fileID: 942508262}
   - component: {fileID: 942508261}
   m_Layer: 5
-  m_Name: TransitionButton
+  m_Name: NewRoundButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11368,7 +11334,7 @@ GameObject:
   - component: {fileID: 1533796579}
   - component: {fileID: 1533796578}
   m_Layer: 5
-  m_Name: TransitionButtonText
+  m_Name: NewRoundButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11424,7 +11390,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: Start Round
 --- !u!222 &1533796579
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13872,7 +13838,7 @@ GameObject:
   - component: {fileID: 1946771357}
   - component: {fileID: 1946771356}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Transition Button Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13982,8 +13948,8 @@ MonoBehaviour:
   startRedeploy: 0
   isStart: 1
   isInitial: 0
-  InvasionDialog: {fileID: 145502267}
   transitionDialog: {fileID: 484573195}
+  transitionBtn: {fileID: 388892938}
   regions:
   - reinforcementBonus: 2
     regionName: South America
@@ -14427,7 +14393,7 @@ MonoBehaviour:
       - {fileID: 625116077}
       GameplayManager: {fileID: 1967363818}
       BattalionCount: 0
-  transitionButtonText: {fileID: 1533796578}
+  transitionButtonText: {fileID: 1946771356}
   playerField: {fileID: 986349594}
 --- !u!4 &1967363821
 Transform:

@@ -47,7 +47,7 @@ public class DiceRoll : MonoBehaviour {
 
     public bool IsDiceRolling()
     {
-        return roll;
+        return roll && gameObject.activeInHierarchy;
     }
 
     private void RunDiceVisual()

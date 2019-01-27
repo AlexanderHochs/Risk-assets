@@ -20,7 +20,6 @@ public class Country
     public GameObject nextStateRef;
     public List<GameObject> associatedCountriesRefs;
     public GameObject GameplayManager;
-    public int BattalionCount;
 
     public Country()
     {

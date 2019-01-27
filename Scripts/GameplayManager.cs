@@ -9,14 +9,16 @@ public class GameplayManager : MonoBehaviour
 {
 
     private const string PLAYER = "player: ";
+    private const string END_INVASION = "End Invasion Round";
+    private const string END_REDEPLOYMENT = "End Redployment Round";
 
     // if public change to private after debug
     public bool startDeploy = false, startBattle = false, startRedeploy = false;
 
     public bool isStart = true;
     public bool isInitial = true;
-    public GameObject InvasionDialog;
     public GameObject transitionDialog;
+    public GameObject transitionBtn;
     public Region[] regions;
     //public GameObject[] regionsRef;
     public Text transitionButtonText;
@@ -42,7 +44,7 @@ public class GameplayManager : MonoBehaviour
     void Start()
     {
         transitionDialog.SetActive(false);
-        InvasionDialog.SetActive(false);
+        transitionBtn.SetActive(false);
         InitializeGame();
     }
 
@@ -71,7 +73,6 @@ public class GameplayManager : MonoBehaviour
         }
         else if (startBattle)
         {
-            InvasionDialog.SetActive(true);
             startBattle = false;
             roundType = 1;
         }
@@ -150,8 +151,7 @@ public class GameplayManager : MonoBehaviour
         {
             isInitial = false;
             roundType = 3;
-            transitionButtonText.text = "Start Round";
-            transitionDialog.SetActive(true);
+            RunTransitionDialog();
         }
     }
 
@@ -290,7 +290,8 @@ public class GameplayManager : MonoBehaviour
                 transitionButtonText.text = "End Deploy";
                 break;
             case 1:
-                InvasionDialog.SetActive(false);
+                transitionBtn.SetActive(true);
+
                 transitionButtonText.text = "End Invasion";
                 break;
             case 2:
@@ -309,21 +310,22 @@ public class GameplayManager : MonoBehaviour
     public void RunTransitionDialog()
     {
         curPlayer.numberOfBattalionsToDeploy = AmountOfDeployments();
-        bool disableTransitionDialog = true;
         switch (roundType)
         {
             case 0:
+                transitionBtn.SetActive(true);
+                transitionButtonText.text = END_INVASION;
                 startBattle = true;
                 break;
             case 1:
+                transitionButtonText.text = END_REDEPLOYMENT;
                 startRedeploy = true;
                 break;
             case 2:
                 curPlayer = GameData.players[(GameData.players.IndexOf(curPlayer) + 1) % GameData.players.Count];
                 playerField.text = PLAYER + GameData.players.IndexOf(curPlayer).ToString();
                 playerField.color = curPlayer.GetColor();
-                roundType = 3;
-                disableTransitionDialog = false;
+                newRound();
                 break;
             case 3:
                 newRound();
@@ -332,8 +334,6 @@ public class GameplayManager : MonoBehaviour
                 Debug.Log("Round Type error ...");
                 break;
         }
-        transitionButtonText.text = "Start Round";
-        transitionDialog.SetActive(!disableTransitionDialog);
         menuActive = transitionDialog.activeInHierarchy;
     }
 
@@ -385,6 +385,7 @@ public class GameplayManager : MonoBehaviour
         startDeploy = true;
         setRegionOwnership(curPlayer);
         curPlayer.CalculateDeploymentNumber();
+        transitionBtn.SetActive(false);
         if (transitionDialog.activeInHierarchy)
         {
             transitionDialog.SetActive(false);

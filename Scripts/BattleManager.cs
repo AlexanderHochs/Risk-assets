@@ -87,6 +87,8 @@ public class BattleManager : MonoBehaviour {
     private void Battle(Player Attacker, Player Defender)
     {
         bool[] won;
+        Country defendingCountry = InvasionData.GetDefendingCountry();
+        Country attackingCountry = InvasionData.GetAttackingCountry();
 
         won = AttackSuccesfulEvaluator(TwoHighestDice(defenseDice), TwoHighestDice(attackDice));
         int i = 0;
@@ -114,8 +116,13 @@ public class BattleManager : MonoBehaviour {
         {
             if (Defender.numberOfBattleBattalions == 0)
             {
-                GameData.players[GameData.players.IndexOf(players[1])].RemoveCountry(InvasionData.GetDefendingCountry());
-                GameData.players[GameData.players.IndexOf(players[0])].AddCountry(InvasionData.GetDefendingCountry());
+                GameData.players[GameData.players.IndexOf(players[1])].RemoveCountry(defendingCountry);
+                // TODO: make moving a customizable amount instead of constant 3
+                int armiesToMove = (Attacker.numberOfBattleBattalions < 3) ? Attacker.numberOfBattleBattalions : 3;
+                attackingCountry.SetNumberOfBattalionsOccupying(attackingCountry.GetNumberOfBattalionsOccupying() - armiesToMove);
+                defendingCountry.SetNumberOfBattalionsOccupying(armiesToMove);
+                defendingCountry.SetOwner(players[0]);
+                GameData.players[GameData.players.IndexOf(players[0])].AddCountry(defendingCountry);
             }
             EndBattle();
         }

@@ -6,6 +6,7 @@ public class Player
 {
     private string ID;
     private Color color;
+    public bool isDead { get; set; }
     public int numberOfBattleBattalions { get; set; }
     public int numberOfBattalionsToDeploy { get; set; }
     private List<Country> countriesOwned { get; set; }

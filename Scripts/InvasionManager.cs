@@ -26,7 +26,7 @@ public class InvasionManager : MonoBehaviour {
 
     public void LoadTransitionDialog()
     {
-        GameplayManager.GetComponent<GameplayManager>().StartTransitionDialog();
+        GameplayManager.GetComponent<GameplayManager>().RunTransitionDialog();
     }
 
 }
