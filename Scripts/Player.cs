@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player
 {
-    private string ID;
+    public string ID;
     private Color color;
     public bool isDead { get; set; }
     public int numberOfBattleBattalions { get; set; }
@@ -62,6 +62,11 @@ public class Player
         return CountriesOwnedMap.ContainsKey(country.GetID());
     }
 
+    public bool hasCountry()
+    {
+        return CountriesOwnedMap.Count > 0;
+    }
+
     public void CalculateDeploymentNumber()
     {
         numberOfBattalionsToDeploy = 3;
@@ -81,5 +86,4 @@ public class Player
             numberOfBattalionsToDeploy += region.reinforcementBonus;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
         }
     }
-
 }

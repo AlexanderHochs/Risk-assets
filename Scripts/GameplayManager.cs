@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -11,6 +12,7 @@ public class GameplayManager : MonoBehaviour
     private const string PLAYER = "player: ";
     private const string END_INVASION = "End Invasion Round";
     private const string END_REDEPLOYMENT = "End Redployment Round";
+    private const string MAIN_MENU_SCENE = "MainMenu";
 
     // if public change to private after debug
     public bool startDeploy = false, startBattle = false, startRedeploy = false;
@@ -37,6 +39,7 @@ public class GameplayManager : MonoBehaviour
     private int initialArmyCount;
     private int roundType = 2; // 0: deploy, 1: attack, 2: redeploy, 3: waiting/initial state
     private List<Country> countryList = new List<Country>();
+    private List<Player> activePlayerList = new List<Player>();
 
     // variables eventually to be put in a static script
     // TODO: player references
@@ -97,13 +100,14 @@ public class GameplayManager : MonoBehaviour
         InitializeCountryOwnerShip();
         foreach (Player player in GameData.players)
         {
+            activePlayerList.Add(player);
             setRegionOwnership(player);
         }
         // debug code
         initialArmyCount = 1;//(int)System.Math.Round((double)(120 / numberOfPlayers));
 
         //TODO: choose player by choice i.e. random
-        curPlayer = GameData.players[0];
+        curPlayer = activePlayerList[0];
         playerField.text = PLAYER + 0;
         playerField.color = curPlayer.GetColor();
         isInitial = true;
@@ -117,28 +121,35 @@ public class GameplayManager : MonoBehaviour
 
         int index = countryList.Count - 1;
         int playerIndex = 0;
+        int debugflag = 0;
         for (int i = index; i > -1; i--)
         {
             int countryIndex = Random.Range(0, i);
             Country country = countryList[countryIndex];
             //TODO: option in main menu to randomize or let people pick which country is theirs
+
             country.SetOwner(GameData.players[playerIndex]);
             GameData.players[playerIndex].AddCountry(country);
             countryList.Remove(country);
 
             playerIndex = (playerIndex + 1) % GameData.players.Count;
+            if(debugflag > 4)
+            {
+                playerIndex = 0;
+            }
+            debugflag++;
         }
     }
 
     public void InitializeGameCallback()
     {
-        int index = GameData.players.IndexOf(curPlayer);
-        curPlayer = GameData.players[(GameData.players.IndexOf(curPlayer) + 1) % GameData.players.Count];
-        playerField.text = PLAYER + GameData.players.IndexOf(curPlayer);
+        int index = activePlayerList.IndexOf(curPlayer);
+        curPlayer = activePlayerList[(activePlayerList.IndexOf(curPlayer) + 1) % activePlayerList.Count];
+        playerField.text = PLAYER + activePlayerList.IndexOf(curPlayer);
         playerField.color = curPlayer.GetColor();
         curPlayer.numberOfBattalionsToDeploy = AmountOfDeployments();
         Debug.Log("player " + index + " added deployment to " + countryReference.gameObjectRef.name);
-        if (index == GameData.players.Count - 1)
+        if (index == activePlayerList.Count - 1)
         {
             initialArmyCount--;
         }
@@ -242,7 +253,11 @@ public class GameplayManager : MonoBehaviour
         else
         {
             SwitchCountryView();
-            countryReferenceCount--;
+            // checks to see if the country was clicked twiced
+            if (countryReferenceCount > 0)
+            {
+                countryReferenceCount--;
+            }
         }
     }
 
@@ -318,12 +333,17 @@ public class GameplayManager : MonoBehaviour
                 startBattle = true;
                 break;
             case 1:
+                refreshPlayers();
+                if(!checkGameOverStatus())
+                {
+                    endGame();
+                }
                 transitionButtonText.text = END_REDEPLOYMENT;
                 startRedeploy = true;
                 break;
             case 2:
-                curPlayer = GameData.players[(GameData.players.IndexOf(curPlayer) + 1) % GameData.players.Count];
-                playerField.text = PLAYER + GameData.players.IndexOf(curPlayer).ToString();
+                curPlayer = getNextPlayer();
+                playerField.text = PLAYER + activePlayerList.IndexOf(curPlayer).ToString();
                 playerField.color = curPlayer.GetColor();
                 newRound();
                 break;
@@ -337,7 +357,7 @@ public class GameplayManager : MonoBehaviour
         menuActive = transitionDialog.activeInHierarchy;
     }
 
-    void setRegionOwnership(Player player)
+    private void setRegionOwnership(Player player)
     {
         foreach (Region region in regions)
         {
@@ -355,7 +375,7 @@ public class GameplayManager : MonoBehaviour
 
     }
 
-    bool PlayerOwnsRegion(Region region, Player player)
+    private bool PlayerOwnsRegion(Region region, Player player)
     {
         foreach (Country country in region.countries)
         {
@@ -367,7 +387,7 @@ public class GameplayManager : MonoBehaviour
         return true;
     }
 
-    void toggleCountryEnability(bool toggle)
+    private void toggleCountryEnability(bool toggle)
     {
         // TODO: fix after regions are implemented
         foreach (Region region in regions)
@@ -379,8 +399,7 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
-    // TODO: this function
-    void newRound()
+    private void newRound()
     {
         startDeploy = true;
         setRegionOwnership(curPlayer);
@@ -393,7 +412,8 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
-    int AmountOfDeployments()
+    // player helpers
+    private int AmountOfDeployments()
     {
         if (isInitial)
         {
@@ -403,5 +423,57 @@ public class GameplayManager : MonoBehaviour
         {
             return 3;
         }
+    }
+
+    private void refreshPlayers()
+    {
+        for (int i = activePlayerList.Count - 1; i > -1; i--)
+        {
+            Player player = activePlayerList[i];
+            if (!player.isDead && !player.hasCountry())
+            {
+                // kills player if it doesn't have any countries left
+                player.isDead = true;
+                activePlayerList.Remove(player);
+            }
+        }
+    }
+
+    private Player getNextPlayer()
+    {
+        curPlayer = GameData.players[(GameData.players.IndexOf(curPlayer) + 1) % GameData.players.Count];
+        while (curPlayer.isDead)
+        {
+            curPlayer = GameData.players[(GameData.players.IndexOf(curPlayer) + 1) % GameData.players.Count];
+        }
+        return curPlayer;
+    }
+
+    // returns the status on whether there are multiple players still playing
+    private bool checkGameOverStatus()
+    {
+        int numberOfLivePlayers = 0;
+        foreach (Player player in GameData.players)
+        {
+            if (!player.isDead)
+            {
+                if(numberOfLivePlayers > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    numberOfLivePlayers++;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void endGame()
+    {
+        SceneManager.LoadScene(MAIN_MENU_SCENE);
+        // TODO: make player win
+        // TODO: open game over dialog which navigates to main menu
     }
 }

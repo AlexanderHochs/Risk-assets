@@ -124,6 +124,8 @@ public class BattleManager : MonoBehaviour {
                 defendingCountry.SetOwner(players[0]);
                 GameData.players[GameData.players.IndexOf(players[0])].AddCountry(defendingCountry);
             }
+            InvasionData.GetAttackingCountry().SetNumberOfBattalionsOccupying(attackingCountry.GetNumberOfBattalionsOccupying());
+            InvasionData.GetDefendingCountry().SetNumberOfBattalionsOccupying(defendingCountry.GetNumberOfBattalionsOccupying());
             EndBattle();
         }
     }
@@ -255,8 +257,6 @@ public class BattleManager : MonoBehaviour {
 
     public void EndBattle()
     {
-        InvasionData.GetAttackingCountry().SetNumberOfBattalionsOccupying(players[0].numberOfBattleBattalions);
-        InvasionData.GetDefendingCountry().SetNumberOfBattalionsOccupying(players[1].numberOfBattleBattalions);
         InvasionData.GetAttackingCountry().GetNextStateCountry().SwitchCountryView();
         InvasionData.GetDefendingCountry().GetNextStateCountry().SwitchCountryView();
         SceneManager.UnloadSceneAsync("Battle");
